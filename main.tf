@@ -11,7 +11,7 @@ resource "aws_vpc" "cg_vpc" {
         Name = "cg_vpc-${random_id.random.dec}"
     }
     lifecycle {
-        create_before_destroy = true   #destroys vpc before creating new one
+        create_before_destroy = true   # destroys vpc before creating new one
     }
 }
 
@@ -23,7 +23,7 @@ resource "aws_internet_gateway" "cg_internet_gateway" {
     }
 }
 
-resource "aws_route_table" "cg_public_rt" {
+resource "aws_route_table" "cg_public_rt" { # lets enhance security :)
     vpc_id = aws_vpc.cg_vpc.id
     
     tags = {
