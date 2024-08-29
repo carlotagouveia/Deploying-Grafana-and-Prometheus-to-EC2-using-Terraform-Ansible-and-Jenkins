@@ -10,6 +10,9 @@ resource "aws_vpc" "cg_vpc" {
     tags = {
         Name = "cg_vpc-${random_id.random.dec}"
     }
+    lifecycle {
+        create_before_destroy = true   #destroys vpc before creating new one
+    }
 }
 
 resource "aws_internet_gateway" "cg_internet_gateway" {
