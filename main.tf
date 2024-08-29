@@ -36,3 +36,11 @@ resource "aws_route" "default_route" {
     destination_cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.cg_internet_gateway.id
 }
+
+resource "aws_default_route_table" "cg_private_rt" {
+    default_route_table_id = aws_vpc.cg_vpc.default_route_table_id
+    
+    tags = {
+        Name = "cg_private"
+    }
+}
