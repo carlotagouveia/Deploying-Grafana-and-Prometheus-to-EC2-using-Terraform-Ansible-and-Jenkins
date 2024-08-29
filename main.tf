@@ -22,3 +22,17 @@ resource "aws_internet_gateway" "cg_internet_gateway" {
         Name = "cg_igw-${random_id.random.dec}"
     }
 }
+
+resource "aws_route_table" "cg_public_rt" {
+    vpc_id = aws_vpc.cg_vpc.id
+    
+    tags = {
+        Name = "cg-public"
+    }
+}
+
+resource "aws_route" "default_route" {
+    route_table_id = aws_route_table.cg_public_rt.id
+    destination_cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.cg_internet_gateway.id
+}
