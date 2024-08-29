@@ -1,1 +1,1 @@
-# deploying-grafana-and-prometheus-to-ec2-using-terraform-ansible-and-jenkins
+# deploying grafana and prometheus to ec2 using terraform ansible and jenkins
