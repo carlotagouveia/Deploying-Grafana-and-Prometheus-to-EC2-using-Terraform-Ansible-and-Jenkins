@@ -1,3 +1,6 @@
+data "aws_availability_zones" "available" {}
+
+
 resource "random_id" "random" {
     byte_length = 2
 }
@@ -44,3 +47,16 @@ resource "aws_default_route_table" "cg_private_rt" {
         Name = "cg_private"
     }
 }
+
+resource "aws_subnet" "cg_public_subnet" {
+    count = length(var.public_cidrs)
+    vpc_id = aws_vpc.cg_vpc.id
+    cidr_block = var.public_cidrs[count.index] # will create 2 cidr blocks
+    map_public_ip_on_launch = true # any instance deployed on this subnet will have public ip
+    availability_zone = data.aws_availability_zones.available.names[count.index]
+    
+    tags = {
+        Name = "cg-public-${count.index + 1}"
+    }
+}
+
