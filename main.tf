@@ -1,3 +1,6 @@
+data "aws_availability_zones" "available" {}
+
+
 resource "random_id" "random" {
     byte_length = 2
 }
@@ -10,6 +13,9 @@ resource "aws_vpc" "cg_vpc" {
     tags = {
         Name = "cg_vpc-${random_id.random.dec}"
     }
+    lifecycle {
+        create_before_destroy = true   # destroys vpc before creating new one
+    }
 }
 
 resource "aws_internet_gateway" "cg_internet_gateway" {
@@ -19,3 +25,38 @@ resource "aws_internet_gateway" "cg_internet_gateway" {
         Name = "cg_igw-${random_id.random.dec}"
     }
 }
+
+resource "aws_route_table" "cg_public_rt" { # lets enhance security :)
+    vpc_id = aws_vpc.cg_vpc.id
+    
+    tags = {
+        Name = "cg-public"
+    }
+}
+
+resource "aws_route" "default_route" {
+    route_table_id = aws_route_table.cg_public_rt.id
+    destination_cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.cg_internet_gateway.id
+}
+
+resource "aws_default_route_table" "cg_private_rt" {
+    default_route_table_id = aws_vpc.cg_vpc.default_route_table_id
+    
+    tags = {
+        Name = "cg_private"
+    }
+}
+
+resource "aws_subnet" "cg_public_subnet" {
+    count = length(var.public_cidrs)
+    vpc_id = aws_vpc.cg_vpc.id
+    cidr_block = var.public_cidrs[count.index] # will create 2 cidr blocks
+    map_public_ip_on_launch = true # any instance deployed on this subnet will have public ip
+    availability_zone = data.aws_availability_zones.available.names[count.index]
+    
+    tags = {
+        Name = "cg-public-${count.index + 1}"
+    }
+}
+
