@@ -1,3 +1,7 @@
+locals {
+    azs = data.aws_availability_zones.available.names
+}
+
 data "aws_availability_zones" "available" {}
 
 
@@ -53,7 +57,7 @@ resource "aws_subnet" "cg_public_subnet" {
     vpc_id = aws_vpc.cg_vpc.id
     cidr_block = var.public_cidrs[count.index] # will create 2 cidr blocks
     map_public_ip_on_launch = true # any instance deployed on this subnet will have public ip
-    availability_zone = data.aws_availability_zones.available.names[count.index]
+    availability_zone = local.azs[count.index]
     
     tags = {
         Name = "cg-public-${count.index + 1}"
@@ -65,7 +69,7 @@ resource "aws_subnet" "cg_private_subnet" {
     vpc_id = aws_vpc.cg_vpc.id
     cidr_block = var.private_cidrs[count.index] # will create 2 cidr blocks
     map_public_ip_on_launch = false 
-    availability_zone = data.aws_availability_zones.available.names[count.index]
+    availability_zone = local.azs[count.index]
     
     tags = {
         Name = "cg-private-${count.index + 1}"
