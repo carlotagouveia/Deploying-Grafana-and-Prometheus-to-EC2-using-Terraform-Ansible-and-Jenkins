@@ -44,7 +44,7 @@ resource "aws_route" "default_route" {
     gateway_id = aws_internet_gateway.cg_internet_gateway.id
 }
 
-resource "aws_default_route_table" "cg_private_rt" {
+resource "aws_default_route_table" "cg_private_rt" {        # all private subnets fall back here
     default_route_table_id = aws_vpc.cg_vpc.default_route_table_id
     
     tags = {
@@ -76,3 +76,9 @@ resource "aws_subnet" "cg_private_subnet" {
     }
 }
 
+
+resource "aws_route_table_association" "cg_public_assoc" {      # all public subnets fall back here
+    count =  length(local.azs)
+    subnet_id = aws_subnet.cg_public_subnet[count.index].id
+    route_table_id = aws_route_table.cg_public_rt.id
+}
