@@ -82,3 +82,28 @@ resource "aws_route_table_association" "cg_public_assoc" {      # all public sub
     subnet_id = aws_subnet.cg_public_subnet[count.index].id
     route_table_id = aws_route_table.cg_public_rt.id
 }
+
+
+resource "aws_security_group" "cg_sg"  {
+    name = "public_sg"
+    desription = "security group for public instances"
+    vpc_id = aws_vpc.cg_vpc.id
+}
+
+resource "aws_security_group_rule" "ingress_all" {      # allows access to every subnets within the cidr block 
+    type = "ingress"
+    from_port = 0
+    to_port = 65535     # highest port
+    protocol = "-1"     # all protocols
+    cidr_blocks = var.access_ip
+    security_group_id = aws_security_group.cg_sg.id
+}
+
+resource "aws_security_group_rule" "egress_all" {      
+    type = "egress"
+    from_port = 0
+    to_port = 65535     # highest port
+    protocol = "-1"     # all protocols
+    cidr_blocks = ["0.0.0.0/0"]
+    security_group_id = aws_security_group.cg_sg.id
+}
