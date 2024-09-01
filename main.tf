@@ -60,3 +60,15 @@ resource "aws_subnet" "cg_public_subnet" {
     }
 }
 
+resource "aws_subnet" "cg_private_subnet" {
+    count = length(var.private_cidrs)
+    vpc_id = aws_vpc.cg_vpc.id
+    cidr_block = var.private_cidrs[count.index] # will create 2 cidr blocks
+    map_public_ip_on_launch = false 
+    availability_zone = data.aws_availability_zones.available.names[count.index]
+    
+    tags = {
+        Name = "cg-private-${count.index + 1}"
+    }
+}
+
