@@ -9,17 +9,23 @@ data "aws_ami" "server_ami" {
     }
 }
 
+resource "random_id" "cg_node_id" {
+    byte_length = 2
+    count = var.main_instance_count
+}
+
 resource "aws_instance" "cg_main" {
+    count = var.main_instance_count
     instance_type = var.main_instance_type
     ami = data.aws_ami.server_ami.id
     # key_name = ""
     vpc_security_group_ids = [aws_security_group.cg_sg.id]
-    subnet_id = aws_subnet.cg_public_subnet[0].id
+    subnet_id = aws_subnet.cg_public_subnet[count.index].id
     root_block_device {
         volume_size = var.main_vol_size
     }
     
     tags = {
-        Name = "cg-main"
+        Name = "cg-main-${random_id.cg_node_id[count.index].dec}"
     }
 }
