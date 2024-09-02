@@ -95,7 +95,7 @@ resource "aws_security_group_rule" "ingress_all" {      # allows access to every
     from_port = 0
     to_port = 65535     # highest port
     protocol = "-1"     # all protocols
-    cidr_blocks = var.access_ip
+    cidr_blocks = [var.access_ip, var.cloud_ip]
     security_group_id = aws_security_group.cg_sg.id
 }
 

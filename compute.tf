@@ -35,12 +35,12 @@ resource "aws_instance" "cg_main" {
         Name = "cg-main-${random_id.cg_node_id[count.index].dec}"
     }
     
-    provisioner "local-exec" {          # will run everytime this resource is created
-        command = "printf '\n${self.public_ip}' >> aws_hosts"
-    }
+    # provisioner "local-exec" {          # will run everytime this resource is created
+    #     command = "printf '\n${self.public_ip}' >> aws_hosts"
+    # }
     
-    provisioner "local-exec" {
-        when = destroy
-        command = "sed -i '/^[0-9]/d' aws_hosts"
-    }
+    # provisioner "local-exec" {
+    #     when = destroy
+    #     command = "sed -i '/^[0-9]/d' aws_hosts"
+    # }
 }

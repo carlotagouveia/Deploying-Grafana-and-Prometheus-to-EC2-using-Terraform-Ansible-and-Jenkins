@@ -4,9 +4,13 @@ variable vpc_cidr {
 }
 
 variable access_ip {
-    type = list(string)
-    default = ["0.0.0.0/0"]
-    
+    type = string
+    default = "0.0.0.0/0"
+}
+
+variable cloud_ip {
+    type = string
+    default = "52.203.246.8/32"
 }
 
 variable main_instance_type {
