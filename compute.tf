@@ -14,11 +14,16 @@ resource "random_id" "cg_node_id" {
     count = var.main_instance_count
 }
 
+resource "aws_key_pair" "cg_auth" {
+    key_name = var.key_name
+    public_key = file(var.public_key_path)
+}
+
 resource "aws_instance" "cg_main" {
     count = var.main_instance_count
     instance_type = var.main_instance_type
     ami = data.aws_ami.server_ami.id
-    # key_name = ""
+    key_name = aws_key_pair.cg_auth.id
     vpc_security_group_ids = [aws_security_group.cg_sg.id]
     subnet_id = aws_subnet.cg_public_subnet[count.index].id
     root_block_device {

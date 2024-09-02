@@ -23,3 +23,11 @@ variable main_instance_count {
     type = number
     default = 1
 }
+
+variable key_name {
+    type = string
+}
+
+variable public_key_path {
+    type = string
+}
