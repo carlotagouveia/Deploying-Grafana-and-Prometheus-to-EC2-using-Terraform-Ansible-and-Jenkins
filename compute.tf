@@ -26,6 +26,7 @@ resource "aws_instance" "cg_main" {
     key_name = aws_key_pair.cg_auth.id
     vpc_security_group_ids = [aws_security_group.cg_sg.id]
     subnet_id = aws_subnet.cg_public_subnet[count.index].id
+    user_data = templatefile("./main-userdata.tpl", {new_hostname = "cg-main-${random_id.cg_node_id[count.index].dec}"})
     root_block_device {
         volume_size = var.main_vol_size
     }
@@ -34,3 +35,4 @@ resource "aws_instance" "cg_main" {
         Name = "cg-main-${random_id.cg_node_id[count.index].dec}"
     }
 }
+
