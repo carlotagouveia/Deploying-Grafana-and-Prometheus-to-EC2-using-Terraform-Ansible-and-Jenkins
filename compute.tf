@@ -36,7 +36,8 @@ resource "aws_instance" "cg_main" {
   }
 
    provisioner "local-exec" {          # will run everytime this resource is created
-       command = "printf '\n${self.public_ip}' >> aws_hosts"
+       command = "printf '\n${self.public_ip}' >> aws_hosts && aws ec2 wait instance-status-ok --instance-ids ${self.id} --region us-east-1"
+                                                  # "null_resource" "grafana_install" doesnt run until instance is successfully initialized
    }
 
    provisioner "local-exec" {
@@ -64,4 +65,8 @@ resource "null_resource" "grafana_install" {
   provisioner "local-exec" {
     command = "ansible-playbook -i aws_hosts --key-file /home/ubuntu/.ssh/cgkey playbooks/grafana.yml"
   }
+}
+
+output "grafana_access" {
+  value = {for i in aws_instance.cg_main[*] : i.tags.Name => "${i.public_ip}:3000"}
 }
