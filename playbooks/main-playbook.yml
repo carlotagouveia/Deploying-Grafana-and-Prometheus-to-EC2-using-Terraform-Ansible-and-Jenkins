@@ -31,8 +31,15 @@
       src: /home/ubuntu/prometheus-2.30.3.linux-amd64.tar.gz
       dest: /home/ubuntu
       remote_src: yes
-  # - name: create prometheus group
-  # - name: create prometheus user
+  - name: create prometheus group
+    ansible.builtin.group:
+      name: prometheus
+      state: present
+  - name: create prometheus user
+    ansible.builtin.user:
+      name: prometheus
+      group: prometheus
+      shell: /sbin/nologin
   # - name: create prometheus directories
   # - name: setting permissions
   # - name: copy files v1
