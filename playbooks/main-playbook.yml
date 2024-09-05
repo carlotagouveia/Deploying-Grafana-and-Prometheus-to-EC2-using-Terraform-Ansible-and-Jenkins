@@ -40,10 +40,38 @@
       name: prometheus
       group: prometheus
       shell: /sbin/nologin
-  # - name: create prometheus directories
-  # - name: setting permissions
-  # - name: copy files v1
-  # - name: copy files v2
+  - name: create prometheus directories
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      recurse: yes      # wil create directories recursevely
+      owner: prometheus
+      group: prometheus
+      mode: '0755'
+    loop:
+      - /etc/prometheus
+      - /etc/prometheus/rules
+      - /etc/prometheus/rules.d
+      - /etc/prometheus/files_sd
+      - /var/lib/prometheus
+  - name: copy files v1
+    ansible.builtin.copy:
+      src: "{{ item }}"
+      dest: /usr/local/bin
+      remote_src: yes
+      owner: prometheus
+      group: prometheus
+    loop:
+      - /home/ubuntu/prometheus-2.30.3.linux-amd64/prometheus
+      - /home/ubuntu/prometheus-2.30.3.linux-amd64/promtool
+  - name: copy files v2
+    ansible.builtin.copy:
+      src: "{{ item }}"
+      dest: /etc/prometheus
+      remote_src: yes
+    loop:
+      - /home/ubuntu/prometheus-2.30.3.linux-amd64/consoles
+      - /home/ubuntu/prometheus-2.30.3.linux-amd64/console_libraries
   # - name: create config file
   # - name: create systemd file
   # - name: ensure prometheus is started
